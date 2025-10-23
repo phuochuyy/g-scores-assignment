@@ -1,0 +1,81 @@
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+      <h1 class="display-4 fw-bold text-primary mb-3">G-Scores</h1>
+      <p class="lead text-muted">Tra cứu điểm thi THPT Quốc gia 2024</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card shadow">
+      <div class="card-body p-4">
+        <h3 class="card-title text-center mb-4">Tra cứu điểm thi</h3>
+        
+        <%= form_with url: search_path, method: :get, local: true, class: "row g-3", id: "search-form" do |form| %>
+          <div class="col-12">
+            <label for="sbd" class="form-label">Số báo danh</label>
+            <%= form.text_field :sbd, 
+                class: "form-control form-control-lg", 
+                placeholder: "Nhập số báo danh (8 chữ số)", 
+                required: true,
+                pattern: "[0-9]{8}",
+                maxlength: 8 %>
+            <div class="form-text">Ví dụ: 01000001</div>
+          </div>
+          <div class="col-12 text-center">
+            <%= form.submit "Tra cứu điểm", class: "btn btn-primary btn-lg px-5" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="row mt-5">
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+          <div class="card-body">
+            <div class="mb-3">
+              <i class="fas fa-search fa-3x text-primary"></i>
+            </div>
+            <h5 class="card-title">Tra cứu nhanh</h5>
+            <p class="card-text">Nhập số báo danh để xem điểm thi của bạn ngay lập tức.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+          <div class="card-body">
+            <div class="mb-3">
+              <i class="fas fa-chart-bar fa-3x text-success"></i>
+            </div>
+            <h5 class="card-title">Thống kê chi tiết</h5>
+            <p class="card-text">Xem thống kê điểm thi theo từng môn học với biểu đồ trực quan.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+          <div class="card-body">
+            <div class="mb-3">
+              <i class="fas fa-trophy fa-3x text-warning"></i>
+            </div>
+            <h5 class="card-title">Top học sinh</h5>
+            <p class="card-text">Danh sách top 10 học sinh khối A (Toán, Lý, Hóa).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="text-center mt-5">
+      <h4 class="mb-3">Truy cập nhanh</h4>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <%= link_to "Xem thống kê", reports_statistics_path, class: "btn btn-outline-primary" %>
+        <%= link_to "Top 10 khối A", reports_top_students_path, class: "btn btn-outline-success" %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>

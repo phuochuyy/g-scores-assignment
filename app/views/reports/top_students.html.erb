@@ -1,0 +1,150 @@
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <h2 class="text-primary">Top 10 học sinh khối A</h2>
+      <p class="text-muted">Danh sách học sinh có điểm trung bình khối A cao nhất (Toán, Vật lý, Hóa học)</p>
+    </div>
+
+    <!-- Top Students List -->
+    <div class="card shadow">
+      <div class="card-header bg-success text-white">
+        <h4 class="mb-0">🏆 Bảng xếp hạng</h4>
+      </div>
+      <div class="card-body p-0">
+        <% if @top_students.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th width="10%">Hạng</th>
+                  <th width="15%">Số báo danh</th>
+                  <th width="15%">Điểm TB khối A</th>
+                  <th width="15%">Toán</th>
+                  <th width="15%">Vật lý</th>
+                  <th width="15%">Hóa học</th>
+                  <th width="15%">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @top_students.each_with_index do |student, index| %>
+                  <tr>
+                    <td>
+                      <% case index + 1
+                         when 1 %>
+                        <span class="badge bg-warning text-dark fs-6">🥇 1</span>
+                      <% when 2 %>
+                        <span class="badge bg-secondary fs-6">🥈 2</span>
+                      <% when 3 %>
+                        <span class="badge bg-warning fs-6">🥉 3</span>
+                      <% else %>
+                        <span class="badge bg-primary fs-6"><%= index + 1 %></span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <strong><%= student.sbd %></strong>
+                    </td>
+                    <td>
+                      <span class="badge bg-success fs-6">
+                        <%= student.group_a_average.round(2) %>
+                      </span>
+                    </td>
+                    <td>
+                      <% if student.toan.present? %>
+                        <span class="badge bg-<%= case student.score_level('toan')
+                                                 when 'excellent' then 'success'
+                                                 when 'good' then 'primary'
+                                                 when 'average' then 'warning'
+                                                 when 'poor' then 'danger'
+                                                 end %>">
+                          <%= student.toan %>
+                        </span>
+                      <% else %>
+                        <span class="text-muted">-</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if student.vat_li.present? %>
+                        <span class="badge bg-<%= case student.score_level('vat_li')
+                                                 when 'excellent' then 'success'
+                                                 when 'good' then 'primary'
+                                                 when 'average' then 'warning'
+                                                 when 'poor' then 'danger'
+                                                 end %>">
+                          <%= student.vat_li %>
+                        </span>
+                      <% else %>
+                        <span class="text-muted">-</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if student.hoa_hoc.present? %>
+                        <span class="badge bg-<%= case student.score_level('hoa_hoc')
+                                                 when 'excellent' then 'success'
+                                                 when 'good' then 'primary'
+                                                 when 'average' then 'warning'
+                                                 when 'poor' then 'danger'
+                                                 end %>">
+                          <%= student.hoa_hoc %>
+                        </span>
+                      <% else %>
+                        <span class="text-muted">-</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <%= link_to "Xem chi tiết", student_path(student.sbd), 
+                          class: "btn btn-sm btn-outline-primary" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-5">
+            <h5 class="text-muted">Không có dữ liệu học sinh khối A</h5>
+            <p class="text-muted">Vui lòng kiểm tra lại dữ liệu import</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Statistics Summary -->
+    <% if @top_students.any? %>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title text-primary">Điểm cao nhất</h5>
+              <h3 class="text-success"><%= @top_students.first.group_a_average.round(2) %></h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title text-primary">Điểm trung bình</h5>
+              <h3 class="text-info">
+                <%= (@top_students.sum(&:group_a_average) / @top_students.size).round(2) %>
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title text-primary">Tổng số học sinh</h5>
+              <h3 class="text-warning"><%= @top_students.size %></h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Actions -->
+    <div class="text-center mt-4">
+      <%= link_to "Trang chủ", root_path, class: "btn btn-primary me-2" %>
+      <%= link_to "Xem thống kê", reports_statistics_path, class: "btn btn-outline-primary" %>
+    </div>
+  </div>
+</div>

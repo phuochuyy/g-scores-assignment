@@ -1,0 +1,223 @@
+<div class="row">
+  <div class="col-12">
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <h2 class="text-primary">Thống kê điểm thi THPT 2024</h2>
+      <p class="text-muted">Phân tích điểm thi theo 4 mức: Xuất sắc (≥8), Khá (6-8), Trung bình (4-6), Yếu (<4)</p>
+    </div>
+
+    <!-- Subject Selection -->
+    <div class="card shadow mb-4">
+      <div class="card-header">
+        <h4 class="mb-0">Chọn môn học</h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <% @subjects.each do |subject| %>
+            <div class="col-md-3 col-sm-6 mb-2">
+              <button class="btn btn-outline-primary w-100 subject-btn" data-subject="<%= subject %>">
+                <%= subject_name(subject) %>
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Container -->
+<div class="card shadow mb-4">
+  <div class="card-header">
+    <h4 class="mb-0">Biểu đồ thống kê</h4>
+  </div>
+  <div class="card-body">
+    <div style="position: relative; height: 400px; width: 100%;">
+      <canvas id="statisticsChart"></canvas>
+    </div>
+  </div>
+</div>
+
+    <!-- Hidden data for JavaScript -->
+    <script type="application/json" id="statistics-data">
+      <%= raw @statistics.to_json %>
+    </script>
+
+    <!-- Inline JavaScript for chart functionality -->
+    <script>
+      // Mapping tên môn học từ không dấu sang có dấu
+      const subjectNames = {
+        'toan': 'Toán',
+        'ngu_van': 'Ngữ văn',
+        'ngoai_ngu': 'Ngoại ngữ',
+        'vat_li': 'Vật lý',
+        'hoa_hoc': 'Hóa học',
+        'sinh_hoc': 'Sinh học',
+        'lich_su': 'Lịch sử',
+        'dia_li': 'Địa lý',
+        'gdcd': 'GDCD'
+      };
+
+      function getSubjectName(subjectKey) {
+        return subjectNames[subjectKey] || subjectKey.charAt(0).toUpperCase() + subjectKey.slice(1).replace('_', ' ');
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, Chart available:', typeof Chart !== 'undefined');
+        
+        // Wait for Chart.js to be available
+        function waitForChart() {
+          if (typeof Chart !== 'undefined') {
+            console.log('Chart.js is available, initializing...');
+            initializeChart();
+          } else {
+            console.log('Chart.js not ready, retrying...');
+            setTimeout(waitForChart, 100);
+          }
+        }
+        
+        function initializeChart() {
+          const statisticsElement = document.getElementById('statistics-data');
+          if (!statisticsElement) {
+            console.log('No statistics data found');
+            return;
+          }
+          
+          const statistics = JSON.parse(statisticsElement.textContent);
+          console.log('Statistics data:', statistics);
+          
+          const ctx = document.getElementById('statisticsChart');
+          if (!ctx) {
+            console.log('Canvas element not found');
+            return;
+          }
+          
+          // Setup subject buttons
+          const subjectButtons = document.querySelectorAll('.subject-btn');
+          let currentChart = null;
+          
+          subjectButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+              const subject = this.dataset.subject;
+              console.log('Clicked subject:', subject);
+              updateChart(subject);
+              updateActiveButton(this);
+            });
+          });
+          
+          function updateActiveButton(activeButton) {
+            subjectButtons.forEach(btn => btn.classList.remove('active'));
+            activeButton.classList.add('active');
+          }
+          
+          function updateChart(subject) {
+            if (!statistics[subject]) {
+              console.log('No data for subject:', subject);
+              return;
+            }
+            
+            const data = statistics[subject];
+            console.log('Data for', subject, ':', data);
+            
+            if (currentChart) {
+              currentChart.destroy();
+            }
+            
+            currentChart = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Xuất sắc (≥8)', 'Khá (6-8)', 'Trung bình (4-6)', 'Yếu (<4)'],
+                datasets: [{
+                  data: data.map(d => d.count),
+                  backgroundColor: ['#28a745', '#007bff', '#ffc107', '#dc3545'],
+                  borderWidth: 2,
+                  borderColor: '#fff'
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: 'Thống kê môn ' + getSubjectName(subject),
+                    font: { size: 16, weight: 'bold' }
+                  },
+                  legend: {
+                    position: 'bottom',
+                    labels: { padding: 20, usePointStyle: true }
+                  }
+                }
+              }
+            });
+            
+            console.log('Chart created successfully');
+          }
+          
+          // Initialize with first subject
+          const firstSubject = Object.keys(statistics)[0];
+          if (firstSubject) {
+            updateChart(firstSubject);
+            const firstButton = document.querySelector('[data-subject="' + firstSubject + '"]');
+            if (firstButton) {
+              firstButton.classList.add('active');
+            }
+          }
+        }
+        
+        // Start waiting for Chart.js
+        waitForChart();
+      });
+    </script>
+
+    <!-- Statistics Table -->
+    <div class="card shadow">
+      <div class="card-header">
+        <h4 class="mb-0">Bảng thống kê chi tiết</h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped" id="statisticsTable">
+            <thead>
+              <tr>
+                <th>Môn học</th>
+                <th>Xuất sắc (≥8)</th>
+                <th>Khá (6-8)</th>
+                <th>Trung bình (4-6)</th>
+                <th>Yếu (<4)</th>
+                <th>Tổng số</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @subjects.each do |subject| %>
+                <% stats = @statistics[subject] %>
+                <tr>
+                  <td><strong><%= subject_name(subject) %></strong></td>
+                  <% %w[excellent good average poor].each do |level| %>
+                    <% stat = stats.find { |s| s[:level] == level } %>
+                    <td>
+                      <span class="badge bg-<%= case level
+                                               when 'excellent' then 'success'
+                                               when 'good' then 'primary'
+                                               when 'average' then 'warning'
+                                               when 'poor' then 'danger'
+                                               end %>">
+                        <%= stat[:count] %> (<%= stat[:percentage] %>%)
+                      </span>
+                    </td>
+                  <% end %>
+                  <td><strong><%= stats.sum { |s| s[:count] } %></strong></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="text-center mt-4">
+      <%= link_to "Trang chủ", root_path, class: "btn btn-primary me-2" %>
+      <%= link_to "Top 10 khối A", reports_top_students_path, class: "btn btn-outline-primary" %>
+    </div>
+  </div>
+</div>
+

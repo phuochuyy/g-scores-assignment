@@ -1,0 +1,85 @@
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <h2 class="text-primary">Kết quả tra cứu điểm thi</h2>
+      <p class="text-muted">Số báo danh: <strong><%= @student.sbd %></strong></p>
+    </div>
+
+    <!-- Student Scores Card -->
+    <div class="card shadow mb-4">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Điểm thi các môn</h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <% Student::SUBJECTS.each do |subject| %>
+            <% score = @student.send(subject) %>
+            <div class="col-md-4 col-lg-3 mb-3">
+              <div class="card h-100">
+                <div class="card-body text-center">
+                  <h6 class="card-title text-muted"><%= subject_name(subject) %></h6>
+                  <% if score.present? %>
+                    <h3 class="text-primary mb-2"><%= score %></h3>
+                    <span class="badge <%= case @student.score_level(subject)
+                                         when 'excellent' then 'bg-success'
+                                         when 'good' then 'bg-primary' 
+                                         when 'average' then 'bg-warning'
+                                         when 'poor' then 'bg-danger'
+                                         end %>">
+                      <%= case @student.score_level(subject)
+                          when 'excellent' then 'Xuất sắc'
+                          when 'good' then 'Khá'
+                          when 'average' then 'Trung bình'
+                          when 'poor' then 'Yếu'
+                          end %>
+                    </span>
+                  <% else %>
+                    <h3 class="text-muted mb-2">-</h3>
+                    <span class="badge bg-secondary">Không thi</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group A Average -->
+    <% if @student.has_group_a_scores? %>
+      <div class="card shadow mb-4">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">Điểm trung bình khối A</h4>
+        </div>
+        <div class="card-body text-center">
+          <h2 class="text-success mb-3"><%= @student.group_a_average.round(2) %></h2>
+          <p class="text-muted">Tính từ các môn: Toán, Vật lý, Hóa học</p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Additional Info -->
+    <div class="card shadow">
+      <div class="card-header">
+        <h4 class="mb-0">Thông tin bổ sung</h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Mã ngoại ngữ:</strong> <%= @student.ma_ngoai_ngu.present? ? @student.ma_ngoai_ngu : 'Không có' %></p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Số môn thi:</strong> <%= Student::SUBJECTS.count { |subject| @student.send(subject).present? } %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="text-center mt-4">
+      <%= link_to "Tra cứu khác", root_path, class: "btn btn-primary me-2" %>
+      <%= link_to "Xem thống kê", reports_statistics_path, class: "btn btn-outline-primary" %>
+    </div>
+  </div>
+</div>
