@@ -17,7 +17,7 @@
     <script>
       // Ensure Chart.js is loaded before our scripts
       window.addEventListener('load', function() {
-        console.log('Page fully loaded, Chart.js available:', typeof Chart !== 'undefined');
+        // Chart.js loaded
       });
     </script>
     <!-- Google Fonts -->
@@ -81,19 +81,21 @@
     </nav>
 
     <!-- Flash Messages -->
-    <% if notice %>
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <%= notice %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    <% end %>
-    
-    <% if alert %>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <%= alert %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    <% end %>
+    <div class="container mt-3">
+      <% if flash[:notice] %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= flash[:notice] %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+      
+      <% if flash[:alert] %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= flash[:alert] %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+    </div>
 
     <!-- Main Content -->
     <main class="container mt-4">

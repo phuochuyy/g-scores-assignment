@@ -1,3 +1,19 @@
+<% content_for :head do %>
+  <style>
+    .subject-btn.loading {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .subject-btn.loading::after {
+      content: " ⏳";
+    }
+    .subject-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+<% end %>
+
 <div class="row">
   <div class="col-12">
     <!-- Header -->
@@ -40,6 +56,91 @@
     <script type="application/json" id="statistics-data">
       <%= raw @statistics.to_json %>
     </script>
+
+    <!-- Simple Chart JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get data
+        const dataElement = document.getElementById('statistics-data');
+        if (!dataElement) return;
+        
+        const statistics = JSON.parse(dataElement.textContent);
+        const canvas = document.getElementById('statisticsChart');
+        if (!canvas) return;
+        
+        let currentChart = null;
+        
+        // Create chart for first subject
+        const firstSubject = Object.keys(statistics)[0];
+        createChart(firstSubject);
+        
+        // Set first button active
+        const firstButton = document.querySelector(`[data-subject="${firstSubject}"]`);
+        if (firstButton) firstButton.classList.add('active');
+        
+        // Add click listeners to buttons
+        document.querySelectorAll('.subject-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const subject = this.dataset.subject;
+            
+            // Update active button
+            document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update chart
+            createChart(subject);
+          });
+        });
+        
+        function createChart(subject) {
+          const data = statistics[subject];
+          if (!data) return;
+          
+          // Destroy existing chart
+          if (currentChart) {
+            currentChart.destroy();
+          }
+          
+          // Create new chart
+          currentChart = new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+              labels: ['Xuất sắc (≥8)', 'Khá (6-8)', 'Trung bình (4-6)', 'Yếu (<4)'],
+              datasets: [{
+                data: data.map(d => d.count),
+                backgroundColor: ['#28a745', '#007bff', '#ffc107', '#dc3545']
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                title: {
+                  display: true,
+                  text: `Thống kê môn ${getSubjectName(subject)}`
+                }
+              }
+            }
+          });
+        }
+        
+        function getSubjectName(subject) {
+          const names = {
+            'toan': 'Toán',
+            'ngu_van': 'Ngữ văn',
+            'ngoai_ngu': 'Ngoại ngữ',
+            'vat_li': 'Vật lý',
+            'hoa_hoc': 'Hóa học',
+            'sinh_hoc': 'Sinh học',
+            'lich_su': 'Lịch sử',
+            'dia_li': 'Địa lý',
+            'gdcd': 'GDCD'
+          };
+          return names[subject] || subject;
+        }
+      });
+    </script>
+
 
 
     <!-- Statistics Table -->
