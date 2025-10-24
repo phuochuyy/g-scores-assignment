@@ -85,19 +85,3 @@ db/
 ├── migrate/        # Migrations
 └── seeds.rb        # Seed data
 ```
-
-## Lệnh hữu ích
-
-```bash
-# Restart containers
-docker compose restart
-
-# Rails console
-docker compose exec web rails console
-
-# RuboCop
-docker compose exec web rubocop
-
-# Logs
-docker compose logs web
-```
