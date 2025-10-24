@@ -59,7 +59,18 @@
 
     <!-- Simple Chart JavaScript -->
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
+      // Global chart instance
+      if (typeof window.globalChart === 'undefined') {
+        window.globalChart = null;
+      }
+      
+      function initializeChart() {
+        // Destroy existing chart first
+        if (window.globalChart) {
+          window.globalChart.destroy();
+          window.globalChart = null;
+        }
+        
         // Get data
         const dataElement = document.getElementById('statistics-data');
         if (!dataElement) return;
@@ -67,8 +78,6 @@
         const statistics = JSON.parse(dataElement.textContent);
         const canvas = document.getElementById('statisticsChart');
         if (!canvas) return;
-        
-        let currentChart = null;
         
         // Create chart for first subject
         const firstSubject = Object.keys(statistics)[0];
@@ -97,12 +106,12 @@
           if (!data) return;
           
           // Destroy existing chart
-          if (currentChart) {
-            currentChart.destroy();
+          if (window.globalChart) {
+            window.globalChart.destroy();
           }
           
           // Create new chart
-          currentChart = new Chart(canvas, {
+          window.globalChart = new Chart(canvas, {
             type: 'doughnut',
             data: {
               labels: ['Xuất sắc (≥8)', 'Khá (6-8)', 'Trung bình (4-6)', 'Yếu (<4)'],
@@ -135,10 +144,24 @@
             'lich_su': 'Lịch sử',
             'dia_li': 'Địa lý',
             'gdcd': 'GDCD'
-          };
-          return names[subject] || subject;
-        }
-      });
+        };
+        return names[subject] || subject;
+      }
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', initializeChart);
+    
+    // Initialize on Turbo navigation
+    document.addEventListener('turbo:load', initializeChart);
+    
+    // Cleanup on page unload
+    document.addEventListener('turbo:before-cache', function() {
+      if (window.globalChart) {
+        window.globalChart.destroy();
+        window.globalChart = null;
+      }
+    });
     </script>
 
 
