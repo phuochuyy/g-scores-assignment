@@ -23,7 +23,7 @@ ENV RAILS_ENV=production
 ENV SECRET_KEY_BASE=${SECRET_KEY_BASE}
 
 # Precompile assets during build
-RUN RAILS_ENV=production bundle exec rails assets:precompile
+RUN SECRET_KEY_BASE=dummy_key_for_build RAILS_ENV=production bundle exec rails assets:precompile
 
 # Expose port
 EXPOSE 8080
