@@ -1,4 +1,4 @@
-# Development Dockerfile for G-Scores
+# Production Dockerfile for G-Scores
 FROM ruby:3.4.5-slim
 
 # Install system dependencies
@@ -18,38 +18,30 @@ RUN bundle config set --local deployment 'false' && \
 # Copy application code
 COPY . .
 
-# Create a script to run the application
+# Set environment variables for production
+ENV RAILS_ENV=production
+ENV SECRET_KEY_BASE=your-secret-key-base-here
+
+# Precompile assets during build
+RUN RAILS_ENV=production bundle exec rails assets:precompile
+
+# Expose port
+EXPOSE 8080
+
+# Create startup script
 RUN echo '#!/bin/bash\n\
 set -e\n\
 \n\
 echo "Starting G-Scores application..."\n\
 \n\
-# Wait for database to be ready\n\
-echo "Waiting for PostgreSQL database..."\n\
-until pg_isready -h db -p 5432 -U postgres; do\n\
-  echo "Database is unavailable - sleeping..."\n\
-  sleep 2\n\
-done\n\
-echo "Database is ready!"\n\
-\n\
 # Run database migrations\n\
 echo "Running database migrations..."\n\
-bundle exec rails db:create db:migrate\n\
-\n\
-# Seed database if needed\n\
-echo "Checking if database needs seeding..."\n\
-if [ "$(bundle exec rails runner "puts Student.count" 2>/dev/null || echo 0)" -eq 0 ]; then\n\
-  echo "Seeding database with CSV data..."\n\
-  bundle exec rails db:seed\n\
-else\n\
-  echo "Database already has data. Student count: $(bundle exec rails runner "puts Student.count")"\n\
-fi\n\
+RAILS_ENV=production bundle exec rails db:migrate\n\
 \n\
 # Start Rails server\n\
 echo "Starting Rails server..."\n\
-bundle exec rails server -b 0.0.0.0 -p 3000\n\
+RAILS_ENV=production bundle exec rails server -b 0.0.0.0 -p 8080\n\
 ' > /app/start.sh && chmod +x /app/start.sh
 
-EXPOSE 3000
-
+# Start Rails server
 CMD ["/app/start.sh"]

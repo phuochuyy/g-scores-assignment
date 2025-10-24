@@ -43,3 +43,21 @@ production:
   database: g_scores_production
   username: postgres
   password: <%= ENV["G_SCORES_DATABASE_PASSWORD"] %>
+
+cable:
+  <<: *default
+  database: g_scores_production
+  username: postgres
+  password: <%= ENV["G_SCORES_DATABASE_PASSWORD"] %>
+
+queue:
+  <<: *default
+  database: g_scores_production
+  username: postgres
+  password: <%= ENV["G_SCORES_DATABASE_PASSWORD"] %>
+
+cache:
+  <<: *default
+  database: g_scores_production
+  username: postgres
+  password: <%= ENV["G_SCORES_DATABASE_PASSWORD"] %>

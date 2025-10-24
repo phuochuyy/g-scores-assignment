@@ -31,8 +31,8 @@
     <%= javascript_importmap_tags %>
     
     <!-- Preload critical CSS -->
-    <link rel="preload" href="/assets/application-8b441ae0.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/assets/application-8b441ae0.css"></noscript>
+    <link rel="preload" href="<%= asset_path('application.css') %>" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="<%= asset_path('application.css') %>"></noscript>
     
     <style>
       body {
