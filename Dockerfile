@@ -20,7 +20,7 @@ COPY . .
 
 # Set environment variables for production
 ENV RAILS_ENV=production
-ENV SECRET_KEY_BASE=your-secret-key-base-here
+ENV SECRET_KEY_BASE=${SECRET_KEY_BASE}
 
 # Precompile assets during build
 RUN RAILS_ENV=production bundle exec rails assets:precompile

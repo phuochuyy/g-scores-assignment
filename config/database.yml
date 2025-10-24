@@ -23,7 +23,7 @@ development:
   <<: *default
   database: g_scores_development
   username: postgres
-  password: password
+  password: <%= ENV.fetch("DATABASE_PASSWORD", "password") %>
   host: db
   port: 5432
 
@@ -34,7 +34,7 @@ test:
   <<: *default
   database: g_scores_test
   username: postgres
-  password: password
+  password: <%= ENV.fetch("DATABASE_PASSWORD", "password") %>
   host: db
   port: 5432
 
