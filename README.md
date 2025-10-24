@@ -65,8 +65,8 @@ docker compose exec web rails db:seed
 
 ## Demo
 
-- **Live Demo**: https://your-app-name.fly.dev/
-- **API Base**: https://your-app-name.fly.dev/api/v1/
+- **Live Demo**: https://delicate-sea-8642.fly.dev/
+- **API Base**: https://delicate-sea-8642.fly.dev/api/v1/
 
 ## Cấu trúc dự án
 
