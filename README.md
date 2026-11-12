@@ -63,10 +63,6 @@ docker compose exec web rails db:seed
 - `GET /api/v1/reports/statistics` - Thống kê điểm thi
 - `GET /api/v1/reports/top_students` - Top 10 khối A
 
-## Demo
-
-- **Live Demo**: https://delicate-sea-8642.fly.dev/
-
 ## Cấu trúc dự án
 
 ```

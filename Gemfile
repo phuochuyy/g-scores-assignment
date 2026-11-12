@@ -55,5 +55,3 @@ group :development do
 end
 
 gem "csv"
-
-gem "dockerfile-rails", ">= 1.7", group: :development
