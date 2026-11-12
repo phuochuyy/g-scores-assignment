@@ -24,8 +24,8 @@ development:
   database: g_scores_development
   username: postgres
   password: <%= ENV.fetch("DATABASE_PASSWORD", "password") %>
-  host: db
-  port: 5432
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5433) %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -35,8 +35,8 @@ test:
   database: g_scores_test
   username: postgres
   password: <%= ENV.fetch("DATABASE_PASSWORD", "password") %>
-  host: db
-  port: 5432
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5433) %>
 
 production:
   <<: *default
