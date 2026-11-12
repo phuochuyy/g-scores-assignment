@@ -35,7 +35,16 @@ cd g-scores
 ```bash
 docker compose up -d
 docker compose exec web rails db:migrate
+# db:seed đọc sample_data.csv (không commit) — tạo dữ liệu giả lập, số dòng tùy chọn
+docker compose exec web ruby script/gen_sample_scores.rb sample_data.csv 1000
 docker compose exec web rails db:seed
+```
+
+   Hoặc chạy Rails trực tiếp trên máy, chỉ PostgreSQL trong Docker (mặc định `localhost:5433`, đổi bằng `DATABASE_HOST` / `DATABASE_PORT`):
+```bash
+docker compose up -d db
+bin/rails db:prepare
+bin/rails server -p 3001
 ```
 
 3. Truy cập ứng dụng
