@@ -38,5 +38,9 @@ module GScores
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # The app stores no uploads, so there are no image variants to process. Without this,
+    # Rails 8.1 warns at boot that the image_processing gem is missing.
+    config.active_storage.variant_processor = :disabled
   end
 end
